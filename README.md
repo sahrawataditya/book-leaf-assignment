@@ -140,7 +140,7 @@ npm start
 | `CLOUDINARY_API_KEY` | No | Cloudinary API key |
 | `CLOUDINARY_API_SECRET` | No | Cloudinary API secret |
 
-4. Deploy — Vercel automatically detects Next.js and runs `npm run build`
+4. Deploy — Vercel automatically detects Next.js, runs `postinstall` (generates Prisma client) then `build`
 5. Run database migrations and seed (one-time):
 
 ```bash
