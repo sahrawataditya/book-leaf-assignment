@@ -4,6 +4,8 @@ A full-stack web application for BookLeaf Publishing to handle author support qu
 
 Built for the BookLeaf Technical Assignment (Full-Stack Developer Position).
 
+**Live Demo**: [https://book-leaf-portal-kappa.vercel.app/](https://book-leaf-portal-kappa.vercel.app/)
+
 ## Tech Stack
 
 | Layer | Technology |
