@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { Button } from "@/components/ui/Button";
 import { Textarea } from "@/components/ui/Textarea";
 import { Card } from "@/components/ui/Card";
@@ -27,22 +28,29 @@ export function ReplyForm({ ticketId }: { ticketId: string }) {
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error || "Failed to send reply");
+        const msg = data.error || "Failed to send reply";
+        setError(msg);
+        toast.error(msg);
         setLoading(false);
         return;
       }
 
       e.currentTarget.reset();
+      toast.success("Reply sent successfully");
       router.refresh();
     } catch {
-      setError("Something went wrong. Please try again.");
+      const msg = "Something went wrong. Please try again.";
+      setError(msg);
+      toast.error(msg);
       setLoading(false);
     }
   }
 
   return (
     <Card>
-      <h3 className="text-sm font-semibold text-gray-900 mb-3">Add Reply</h3>
+      <h3 className="text-sm font-semibold mb-3" style={{ color: "var(--text)" }}>
+        Add Reply
+      </h3>
       <form onSubmit={handleSubmit} className="space-y-3">
         <Textarea
           name="message"
@@ -53,7 +61,10 @@ export function ReplyForm({ ticketId }: { ticketId: string }) {
           rows={4}
         />
         {error && (
-          <p className="text-sm text-red-600 bg-red-50 rounded-lg p-3">
+          <p
+            className="text-sm rounded-lg p-3"
+            style={{ color: "#991b1b", backgroundColor: "#fef2f2" }}
+          >
             {error}
           </p>
         )}

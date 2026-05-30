@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
@@ -58,11 +59,17 @@ export function AdminTicketActions({
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error || "Update failed");
+        const msg = data.error || "Update failed";
+        setError(msg);
+        toast.error(msg);
+      } else {
+        toast.success("Ticket updated");
       }
       router.refresh();
     } catch {
-      setError("Failed to update ticket");
+      const msg = "Failed to update ticket";
+      setError(msg);
+      toast.error(msg);
     }
     setLoading(false);
   }
@@ -82,14 +89,19 @@ export function AdminTicketActions({
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error || "Failed to send");
+        const msg = data.error || "Failed to send";
+        setError(msg);
+        toast.error(msg);
       } else {
         setMessage("");
         setDraft("");
+        toast.success(isInternal ? "Internal note saved" : "Response sent to author");
         router.refresh();
       }
     } catch {
-      setError("Failed to send message");
+      const msg = "Failed to send message";
+      setError(msg);
+      toast.error(msg);
     }
     setLoading(false);
   }
@@ -107,17 +119,22 @@ export function AdminTicketActions({
 
       const data = await res.json();
 
-      if (action === "draft" && data.draft) {
-        setDraft(data.draft);
-      }
-
       if (data.fallback) {
-        setError(`${action} AI unavailable, using fallback`);
+        toast.error(`${action} AI unavailable, using fallback`);
+      } else if (action === "draft") {
+        if (data.draft) {
+          setDraft(data.draft);
+          toast.success("AI draft generated");
+        }
+      } else {
+        toast.success(`AI ${action} completed`);
       }
 
       router.refresh();
     } catch {
-      setError(`AI ${action} failed`);
+      const msg = `AI ${action} failed`;
+      setError(msg);
+      toast.error(msg);
     }
     setAiLoading(null);
   }
@@ -201,7 +218,10 @@ export function AdminTicketActions({
         </div>
 
         {error && (
-          <p className="text-sm text-red-600 bg-red-50 rounded-lg p-3 mt-3">
+          <p
+            className="text-sm rounded-lg p-3 mt-3"
+            style={{ color: "#991b1b", backgroundColor: "#fef2f2" }}
+          >
             {error}
           </p>
         )}
@@ -221,8 +241,19 @@ export function AdminTicketActions({
           </Button>
         </div>
         {draft && (
-          <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-700 whitespace-pre-wrap">{draft}</p>
+          <div
+            className="mb-4 p-4 rounded-lg border"
+            style={{
+              backgroundColor: "var(--surface-hover)",
+              borderColor: "var(--border)",
+            }}
+          >
+            <p
+              className="text-sm whitespace-pre-wrap"
+              style={{ color: "var(--text)" }}
+            >
+              {draft}
+            </p>
           </div>
         )}
       </Card>

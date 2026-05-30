@@ -69,7 +69,7 @@ export async function Sidebar() {
         <form action={handleSignOut}>
           <button
             type="submit"
-            className="w-full px-4 py-2 text-sm font-medium rounded-lg transition-colors"
+            className="w-full px-4 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer"
             style={{
               color: "var(--text-secondary)",
               backgroundColor: "var(--bg-page)",

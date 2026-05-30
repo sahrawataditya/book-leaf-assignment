@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -52,15 +53,20 @@ export function NewTicketForm({
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Failed to create ticket");
+        const msg = data.error || "Failed to create ticket";
+        setError(msg);
+        toast.error(msg);
         setLoading(false);
         return;
       }
 
+      toast.success("Ticket created successfully");
       router.push(`/author/tickets/${data.ticket.ticketId}`);
       router.refresh();
     } catch {
-      setError("Something went wrong. Please try again.");
+      const msg = "Something went wrong. Please try again.";
+      setError(msg);
+      toast.error(msg);
       setLoading(false);
     }
   }
@@ -71,7 +77,9 @@ export function NewTicketForm({
 
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
-      setError("File too large. Maximum size is 10MB.");
+      const msg = "File too large. Maximum size is 10MB.";
+      setError(msg);
+      toast.error(msg);
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
@@ -91,15 +99,20 @@ export function NewTicketForm({
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Upload failed");
+        const msg = data.error || "Upload failed";
+        setError(msg);
+        toast.error(msg);
         setUploading(false);
         return;
       }
 
       setUploadedFile({ url: data.url, name: data.originalName });
+      toast.success("File uploaded successfully");
       setUploading(false);
     } catch {
-      setError("Upload failed. Please try again.");
+      const msg = "Upload failed. Please try again.";
+      setError(msg);
+      toast.error(msg);
       setUploading(false);
     }
   }
@@ -194,7 +207,7 @@ export function NewTicketForm({
           </p>
         </div>
 
-        {error && (
+        {error && !loading && (
           <p
             className="text-sm text-red-600 rounded-lg p-3"
             style={{ backgroundColor: "#fef2f2" }}
