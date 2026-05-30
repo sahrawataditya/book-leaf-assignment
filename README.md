@@ -17,7 +17,8 @@ Built for the BookLeaf Technical Assignment (Full-Stack Developer Position).
 | **Real-time** | Server-Sent Events (SSE) |
 | **Styling** | Tailwind CSS with CSS custom properties theming |
 | **Validation** | Zod |
-| **Deployment** | Railway |
+| **Testing** | Vitest + Testing Library (93 tests) |
+| **Deployment** | Vercel |
 
 ## Features
 
@@ -105,12 +106,50 @@ npm run dev
 
 Visit [http://localhost:3000](http://localhost:3000)
 
-### 5. Build for Production
+### 5. Run Tests
+
+```bash
+npm test         # Run once
+npm run test:watch  # Watch mode
+```
+
+### 6. Build for Production
 
 ```bash
 npm run build
 npm start
 ```
+
+## Deploy to Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+
+### Steps
+
+1. Push your repo to GitHub
+2. Import the project in [Vercel](https://vercel.com/new)
+3. Add the following environment variables in the Vercel dashboard:
+
+| Variable | Required | Description |
+|---|---|---|
+| `DATABASE_URL` | Yes | PostgreSQL connection string (use [Neon](https://neon.tech) or [Supabase](https://supabase.com) for serverless Postgres) |
+| `NEXTAUTH_SECRET` | Yes | `openssl rand -base64 32` |
+| `NEXTAUTH_URL` | Yes | Your Vercel deployment URL (e.g. `https://book-leaf.vercel.app`) |
+| `GROQ_API_KEY` | No | Groq API key for AI features |
+| `CLOUDINARY_CLOUD_NAME` | No | Cloudinary cloud name |
+| `CLOUDINARY_API_KEY` | No | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | No | Cloudinary API secret |
+
+4. Deploy — Vercel automatically detects Next.js and runs `npm run build`
+5. Run database migrations and seed (one-time):
+
+```bash
+# From your local machine, after setting DATABASE_URL to the production DB:
+npx prisma migrate deploy
+npx prisma db seed
+```
+
+> **Note**: Use a serverless-compatible PostgreSQL provider like [Neon](https://neon.tech) or [Supabase](https://supabase.com). The Prisma `pg` adapter works well with their connection poolers.
 
 ## Test Credentials
 
@@ -268,8 +307,12 @@ book-leaf-portal/
 │   │   ├── login/             # Login page
 │   │   ├── author/            # Author portal (dashboard, books, tickets)
 │   │   ├── admin/             # Admin portal (dashboard, tickets)
-│   │   └── api/               # REST API routes
-│   ├── components/
+│   │   └── api/               # REST API routes (12 endpoints)
+│   ├── __tests__/             # Test suite (9 files, 93 tests)
+│   │   ├── lib/               # Unit tests for validations & SSE
+│   │   ├── types/             # Type constants tests
+│   │   ├── components/        # Component tests (Button, Input, Badge, Card)
+│   │   └── api/               # Integration tests for API routes
 │   │   ├── ui/                # Button, Input, Select, Card, Badge, Textarea
 │   │   ├── tickets/           # Ticket-related components (SSE listener)
 │   │   └── layout/            # Sidebar, PortalLayout, ThemeProvider, ThemeToggle
@@ -298,9 +341,9 @@ book-leaf-portal/
 
 1. **Email Notifications**: No email triggers. Would add with Resend/SendGrid when ticket status changes.
 2. **Pagination**: Ticket lists don't paginate. Would add cursor-based pagination for large datasets.
-3. **Testing**: Unit and integration tests would be added with Vitest and Playwright.
-4. **Rate Limiting**: API endpoints lack rate limiting. Would add with Vercel KV or a middleware.
-5. **Analytics**: Admin dashboard could include charts for ticket volume trends, response times, and AI accuracy.
+3. **Rate Limiting**: API endpoints lack rate limiting. Would add with Vercel KV or a middleware.
+4. **Analytics**: Admin dashboard could include charts for ticket volume trends, response times, and AI accuracy.
+5. **E2E Testing**: Browser-level tests with Playwright would add coverage for full user flows (login → create ticket → admin respond).
 
 ## License
 
