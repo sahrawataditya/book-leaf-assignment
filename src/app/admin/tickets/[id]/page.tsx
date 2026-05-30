@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { AdminTicketActions } from "./AdminTicketActions";
 import { SSETicketListener } from "@/components/tickets/SSETicketListener";
+import { TicketFileDisplay } from "@/components/tickets/TicketFileDisplay";
 import {
   CATEGORY_LABELS,
   PRIORITY_LABELS,
@@ -108,6 +109,7 @@ export default async function AdminTicketDetail({
           )}
         </div>
         <p className="text-gray-700 whitespace-pre-wrap">{ticket.description}</p>
+        <TicketFileDisplay fileUrl={ticket.fileUrl} />
         <p className="text-xs text-gray-400 mt-3">
           Submitted on {ticket.createdAt.toLocaleDateString()}{" "}
           {ticket.createdAt.toLocaleTimeString()}

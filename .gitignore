@@ -31,9 +31,6 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files
-.env
-.env.local
-.env.production
 !.env.example
 
 # vercel
@@ -44,3 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+config.bat

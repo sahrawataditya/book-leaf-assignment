@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Card } from "@/components/ui/Card";
+import { SSETicketListener } from "@/components/tickets/SSETicketListener";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
@@ -19,6 +20,7 @@ export default async function AdminDashboard() {
 
   return (
     <div>
+      <SSETicketListener authorProfileId="admin" />
       <h1 className="text-2xl font-bold mb-6" style={{ color: "var(--text)" }}>
         Admin Dashboard
       </h1>

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { SSETicketListener } from "@/components/tickets/SSETicketListener";
+import { TicketFileDisplay } from "@/components/tickets/TicketFileDisplay";
 import { ReplyForm } from "./ReplyForm";
 import {
   CATEGORY_LABELS,
@@ -74,6 +75,7 @@ export default async function TicketDetail({
         <p className="whitespace-pre-wrap" style={{ color: "var(--text)" }}>
           {ticket.description}
         </p>
+        <TicketFileDisplay fileUrl={ticket.fileUrl} />
         <p className="text-xs mt-3" style={{ color: "var(--text-muted)" }}>
           Submitted on {ticket.createdAt.toLocaleDateString()}{" "}
           {ticket.createdAt.toLocaleTimeString()}
