@@ -68,7 +68,8 @@ export function AdminTicketActions({
   }
 
   async function sendReply(isInternal = false) {
-    if (!message.trim()) return;
+    const text = message.trim() || draft.trim();
+    if (!text) return;
     setLoading(true);
     setError("");
 
@@ -76,7 +77,7 @@ export function AdminTicketActions({
       const res = await fetch(`/api/tickets/${ticketId}/responses`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, isInternal }),
+        body: JSON.stringify({ message: text, isInternal }),
       });
 
       if (!res.ok) {
@@ -84,6 +85,7 @@ export function AdminTicketActions({
         setError(data.error || "Failed to send");
       } else {
         setMessage("");
+        setDraft("");
         router.refresh();
       }
     } catch {
@@ -239,7 +241,7 @@ export function AdminTicketActions({
           <div className="flex gap-2">
             <Button
               onClick={() => sendReply(false)}
-              disabled={loading || !message.trim()}
+              disabled={loading || !(message.trim() || draft.trim())}
               size="sm"
             >
               {loading ? "Sending..." : "Send to Author"}
@@ -248,7 +250,7 @@ export function AdminTicketActions({
               variant="secondary"
               size="sm"
               onClick={() => sendReply(true)}
-              disabled={loading || !message.trim()}
+              disabled={loading || !(message.trim() || draft.trim())}
             >
               {loading ? "Saving..." : "Add Internal Note"}
             </Button>
