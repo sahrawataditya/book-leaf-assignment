@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  AUTHOR
+  ADMIN
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum TicketCategory {
+  ROYALTY_PAYMENTS
+  ISBN_METADATA
+  PRINTING_QUALITY
+  DISTRIBUTION_AVAILABILITY
+  PRODUCTION_STATUS
+  GENERAL_INQUIRY
+}
+
+enum TicketPriority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  role          Role      @default(AUTHOR)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts        Account[]
+  sessions        Session[]
+  authorProfile   AuthorProfile?
+  assignedTickets Ticket[]       @relation("AssignedTickets")
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model AuthorProfile {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  authorId   String   @unique
+  phone      String?
+  city       String?
+  joinedDate DateTime?
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  books      Book[]
+  tickets    Ticket[]
+
+  @@map("author_profiles")
+}
+
+model Book {
+  id                    String   @id @default(cuid())
+  bookId                String   @unique
+  authorProfileId       String
+  title                 String
+  isbn                  String?
+  genre                 String?
+  publicationDate       DateTime?
+  status                String?
+  mrp                   Float?
+  authorRoyaltyPerCopy  Float?
+  totalCopiesSold       Int      @default(0)
+  totalRoyaltyEarned    Float    @default(0)
+  royaltyPaid           Float    @default(0)
+  royaltyPending        Float    @default(0)
+  lastRoyaltyPayoutDate DateTime?
+  printPartner          String?
+  availableOn           String[]
+
+  author  AuthorProfile @relation(fields: [authorProfileId], references: [id], onDelete: Cascade)
+  tickets Ticket[]
+
+  @@map("books")
+}
+
+model Ticket {
+  id                   String         @id @default(cuid())
+  ticketId             String         @unique
+  authorProfileId      String
+  bookId               String?
+  subject              String
+  description          String
+  fileUrl              String?
+  category             TicketCategory @default(GENERAL_INQUIRY)
+  aiClassifiedCategory String?
+  priority             TicketPriority @default(MEDIUM)
+  aiPriorityScore      String?
+  status               TicketStatus   @default(OPEN)
+  assignedToId         String?
+  assignedTo           User?          @relation("AssignedTickets", fields: [assignedToId], references: [id])
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+
+  authorProfile AuthorProfile    @relation(fields: [authorProfileId], references: [id])
+  book          Book?            @relation(fields: [bookId], references: [id])
+  responses     TicketResponse[]
+
+  @@map("tickets")
+}
+
+model TicketResponse {
+  id         String   @id @default(cuid())
+  ticketId   String
+  message    String
+  authorType String
+  isInternal Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@map("ticket_responses")
+}
