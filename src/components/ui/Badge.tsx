@@ -3,17 +3,20 @@ interface BadgeProps {
   variant?: "default" | "success" | "warning" | "danger" | "info";
 }
 
-const variants = {
-  default: "bg-gray-100 text-gray-800",
-  success: "bg-green-100 text-green-800",
-  warning: "bg-yellow-100 text-yellow-800",
-  danger: "bg-red-100 text-red-800",
-  info: "bg-blue-100 text-blue-800",
+const variants: Record<string, React.CSSProperties> = {
+  default: { backgroundColor: "#f3f4f6", color: "#374151" },
+  success: { backgroundColor: "#ecfdf5", color: "#065f46" },
+  warning: { backgroundColor: "#fef3c7", color: "#92400e" },
+  danger: { backgroundColor: "#fef2f2", color: "#991b1b" },
+  info: { backgroundColor: "#eef2ff", color: "#4338ca" },
 };
 
 export function Badge({ children, variant = "default" }: BadgeProps) {
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variants[variant]}`}>
+    <span
+      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+      style={variants[variant]}
+    >
       {children}
     </span>
   );

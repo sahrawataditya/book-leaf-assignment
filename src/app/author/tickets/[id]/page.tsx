@@ -16,14 +16,10 @@ import {
 
 function getBadgeVariant(status: TicketStatus) {
   switch (status) {
-    case "OPEN":
-      return "warning" as const;
-    case "IN_PROGRESS":
-      return "info" as const;
-    case "RESOLVED":
-      return "success" as const;
-    case "CLOSED":
-      return "default" as const;
+    case "OPEN": return "warning" as const;
+    case "IN_PROGRESS": return "info" as const;
+    case "RESOLVED": return "success" as const;
+    case "CLOSED": return "default" as const;
   }
 }
 
@@ -55,7 +51,7 @@ export default async function TicketDetail({
 
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs font-mono text-gray-400">
+          <span className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>
             {ticket.ticketId}
           </span>
           <Badge variant={getBadgeVariant(ticket.status as TicketStatus)}>
@@ -65,16 +61,20 @@ export default async function TicketDetail({
             {PRIORITY_LABELS[ticket.priority as TicketPriority]}
           </Badge>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900">{ticket.subject}</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold" style={{ color: "var(--text)" }}>
+          {ticket.subject}
+        </h1>
+        <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
           {CATEGORY_LABELS[ticket.category as TicketCategory]}
           {ticket.book && ` · ${ticket.book.title} (${ticket.book.bookId})`}
         </p>
       </div>
 
       <Card className="mb-6">
-        <p className="text-gray-700 whitespace-pre-wrap">{ticket.description}</p>
-        <p className="text-xs text-gray-400 mt-3">
+        <p className="whitespace-pre-wrap" style={{ color: "var(--text)" }}>
+          {ticket.description}
+        </p>
+        <p className="text-xs mt-3" style={{ color: "var(--text-muted)" }}>
           Submitted on {ticket.createdAt.toLocaleDateString()}{" "}
           {ticket.createdAt.toLocaleTimeString()}
         </p>
@@ -82,7 +82,10 @@ export default async function TicketDetail({
 
       <div className="space-y-4 mb-6">
         {ticket.responses.length === 0 ? (
-          <p className="text-sm text-gray-500 text-center py-4">
+          <p
+            className="text-sm text-center py-4"
+            style={{ color: "var(--text-muted)" }}
+          >
             No responses yet. The BookLeaf team will get back to you soon.
           </p>
         ) : (
@@ -91,19 +94,22 @@ export default async function TicketDetail({
             .map((response) => (
               <Card
                 key={response.id}
-                className={`${response.authorType === "ADMIN" ? "border-indigo-200 bg-indigo-50/30" : ""}`}
+                className={response.authorType === "ADMIN" ? "border-primary/20" : ""}
+                style={
+                  response.authorType === "ADMIN"
+                    ? { backgroundColor: "var(--primary-light)" }
+                    : undefined
+                }
               >
                 <div className="flex items-start gap-2 mb-2">
-                  <Badge
-                    variant={response.authorType === "ADMIN" ? "info" : "default"}
-                  >
+                  <Badge variant={response.authorType === "ADMIN" ? "info" : "default"}>
                     {response.authorType === "ADMIN" ? "BookLeaf Team" : "You"}
                   </Badge>
                 </div>
-                <p className="text-gray-700 whitespace-pre-wrap text-sm">
+                <p className="whitespace-pre-wrap text-sm" style={{ color: "var(--text)" }}>
                   {response.message}
                 </p>
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>
                   {response.createdAt.toLocaleDateString()}{" "}
                   {response.createdAt.toLocaleTimeString()}
                 </p>
@@ -112,9 +118,7 @@ export default async function TicketDetail({
         )}
       </div>
 
-      {ticket.status !== "CLOSED" && (
-        <ReplyForm ticketId={ticket.id} />
-      )}
+      {ticket.status !== "CLOSED" && <ReplyForm ticketId={ticket.id} />}
     </div>
   );
 }

@@ -12,21 +12,58 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const base = "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
-  const variants = {
-    primary: "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
-    secondary: "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-indigo-500",
-    danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
-    ghost: "text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:ring-gray-500",
-  };
+  const base =
+    "inline-flex items-center justify-center rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+
   const sizes = {
     sm: "px-3 py-1.5 text-sm",
     md: "px-4 py-2 text-sm",
     lg: "px-6 py-3 text-base",
   };
 
+  const variants: Record<string, React.CSSProperties> = {
+    primary: {
+      backgroundColor: "var(--primary)",
+      color: "white",
+    },
+    secondary: {
+      backgroundColor: "var(--surface)",
+      color: "var(--text-secondary)",
+      border: "1px solid var(--border)",
+    },
+    danger: {
+      backgroundColor: "#dc2626",
+      color: "white",
+    },
+    ghost: {
+      color: "var(--text-secondary)",
+      backgroundColor: "transparent",
+    },
+  };
+
   return (
-    <button className={`${base} ${variants[variant]} ${sizes[size]} ${className}`} {...props}>
+    <button
+      className={`${base} ${sizes[size]} ${className}`}
+      style={variants[variant]}
+      onMouseEnter={(e) => {
+        if (variant === "primary")
+          e.currentTarget.style.backgroundColor = "var(--primary-hover)";
+        else if (variant === "secondary")
+          e.currentTarget.style.backgroundColor = "var(--surface-hover)";
+        else if (variant === "ghost")
+          e.currentTarget.style.backgroundColor = "var(--surface-hover)";
+        else if (variant === "danger")
+          e.currentTarget.style.backgroundColor = "#b91c1c";
+      }}
+      onMouseLeave={(e) => {
+        const style = variants[variant];
+        if (style.backgroundColor)
+          e.currentTarget.style.backgroundColor = style.backgroundColor;
+        else
+          e.currentTarget.style.backgroundColor = "";
+      }}
+      {...props}
+    >
       {children}
     </button>
   );

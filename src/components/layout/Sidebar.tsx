@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { auth, signOut } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { ThemeToggle } from "./ThemeToggle";
 
 async function handleSignOut() {
   "use server";
@@ -14,25 +15,27 @@ export async function Sidebar() {
   const isAdmin = user?.role === "ADMIN";
 
   const authorLinks = [
-    { href: "/author", label: "Dashboard" },
-    { href: "/author/books", label: "My Books" },
-    { href: "/author/tickets", label: "My Tickets" },
-    { href: "/author/tickets/new", label: "Submit Query" },
+    { href: "/author", label: "Dashboard", icon: "📊" },
+    { href: "/author/books", label: "My Books", icon: "📚" },
+    { href: "/author/tickets", label: "My Tickets", icon: "🎫" },
+    { href: "/author/tickets/new", label: "Submit Query", icon: "✉️" },
   ];
 
   const adminLinks = [
-    { href: "/admin", label: "Dashboard" },
-    { href: "/admin/tickets", label: "Ticket Queue" },
+    { href: "/admin", label: "Dashboard", icon: "📊" },
+    { href: "/admin/tickets", label: "Ticket Queue", icon: "🎫" },
   ];
 
   const links = isAdmin ? adminLinks : authorLinks;
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 min-h-screen flex flex-col">
-      <div className="p-6 border-b border-gray-200">
+    <aside className="w-64 bg-sidebar-bg border-r border-sidebar-border min-h-screen flex flex-col">
+      <div className="p-6 border-b border-sidebar-border">
         <Link href={isAdmin ? "/admin" : "/author"}>
-          <h1 className="text-xl font-bold text-indigo-600">BookLeaf</h1>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <h1 className="text-xl font-bold" style={{ color: "var(--primary)" }}>
+            BookLeaf
+          </h1>
+          <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>
             {isAdmin ? "Admin Portal" : "Author Portal"}
           </p>
         </Link>
@@ -43,19 +46,42 @@ export async function Sidebar() {
           <Link
             key={link.href}
             href={link.href}
-            className="block px-4 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors"
+            style={{
+              color: "var(--sidebar-text)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "var(--sidebar-hover-bg)";
+              e.currentTarget.style.color = "var(--sidebar-hover-text)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.color = "var(--sidebar-text)";
+            }}
           >
+            <span className="text-base">{link.icon}</span>
             {link.label}
           </Link>
         ))}
       </nav>
 
-      <div className="p-4 border-t border-gray-200">
-        <div className="text-sm text-gray-600 mb-3 truncate">{user?.name || user?.email}</div>
+      <ThemeToggle />
+
+      <div className="p-4 border-t border-sidebar-border">
+        <div
+          className="text-sm mb-3 truncate"
+          style={{ color: "var(--text-secondary)" }}
+        >
+          {user?.name || user?.email}
+        </div>
         <form action={handleSignOut}>
           <button
             type="submit"
-            className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            className="w-full px-4 py-2 text-sm font-medium rounded-lg transition-colors"
+            style={{
+              color: "var(--text-secondary)",
+              backgroundColor: "var(--bg-page)",
+            }}
           >
             Sign Out
           </button>

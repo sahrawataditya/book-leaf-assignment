@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import Groq from "groq-sdk";
 
 const CATEGORIES = [
   "ROYALTY_PAYMENTS",
@@ -54,31 +54,17 @@ Communication Tone Guidelines:
 - If the issue requires escalation or investigation, give a clear timeline ("Our team will look into this and get back to you within 48 hours") rather than open-ended promises.
 - Always end with a clear next step for the author and/or the BookLeaf team.`;
 
-let openai: OpenAI | null = null;
+let groq: Groq | null = null;
 
-function getClient(): OpenAI | null {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey || apiKey === "" || apiKey.startsWith("sk-your")) {
+function getClient(): Groq | null {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey || apiKey === "" || apiKey.startsWith("gsk_") === false) {
     return null;
   }
-  if (!openai) {
-    openai = new OpenAI({ apiKey });
+  if (!groq) {
+    groq = new Groq({ apiKey });
   }
-  return openai;
-}
-
-export interface ClassificationResult {
-  category: string;
-  confidence: string;
-}
-
-export interface PriorityResult {
-  priority: string;
-  reason: string;
-}
-
-export interface DraftResult {
-  draft: string;
+  return groq;
 }
 
 export async function classifyTicket(
@@ -90,7 +76,7 @@ export async function classifyTicket(
 
   try {
     const response = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "llama-3.3-70b-versatile",
       messages: [
         {
           role: "system",
@@ -137,7 +123,7 @@ export async function getPriorityScore(
 
   try {
     const response = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "llama-3.3-70b-versatile",
       messages: [
         {
           role: "system",
@@ -183,7 +169,7 @@ export async function draftResponse(
 
   try {
     const response = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "llama-3.3-70b-versatile",
       messages: [
         {
           role: "system",

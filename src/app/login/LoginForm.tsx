@@ -42,7 +42,7 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <Input
         label="Email"
         name="email"
@@ -60,9 +60,14 @@ export function LoginForm() {
         autoComplete="current-password"
       />
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-lg p-3">{error}</p>
+        <p
+          className="text-sm text-red-600 rounded-lg p-3"
+          style={{ backgroundColor: "#fef2f2" }}
+        >
+          {error}
+        </p>
       )}
-      <Button type="submit" className="w-full" disabled={loading}>
+      <Button type="submit" className="w-full" disabled={loading} size="lg">
         {loading ? "Signing in..." : "Sign In"}
       </Button>
     </form>
