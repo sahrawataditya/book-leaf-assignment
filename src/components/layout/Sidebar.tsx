@@ -46,17 +46,9 @@ export async function Sidebar() {
           <Link
             key={link.href}
             href={link.href}
-            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors"
+            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--sidebar-hover-text)]"
             style={{
               color: "var(--sidebar-text)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "var(--sidebar-hover-bg)";
-              e.currentTarget.style.color = "var(--sidebar-hover-text)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.color = "var(--sidebar-text)";
             }}
           >
             <span className="text-base">{link.icon}</span>
